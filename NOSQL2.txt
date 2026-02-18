@@ -1,0 +1,442 @@
+Please enter a MongoDB connection string (Default: mongodb://localhost/):
+
+Current Mongosh Log ID: 6995406b2ff37047064d7941
+Connecting to:          mongodb://127.0.0.1:27017/?directConnection=true&serverSelectionTimeoutMS=2000&appName=mongosh+2.3.9
+Using MongoDB:          8.0.4
+Using Mongosh:          2.3.9
+mongosh 2.7.0 is available for download: https://www.mongodb.com/try/download/shell
+
+For mongosh info see: https://www.mongodb.com/docs/mongodb-shell/
+
+------
+   The server generated these startup warnings when booting
+   2026-02-17T12:07:58.415+05:00: Access control is not enabled for the database. Read and write access to data and configuration is unrestricted
+------
+
+test> show dbs
+admin       40.00 KiB
+collegedb  152.00 KiB
+config      96.00 KiB
+local       40.00 KiB
+test> use collegedb
+switched to db collegedb
+collegedb> db
+collegedb
+collegedb> show collections
+courseinfo
+studentinfo
+teacherinfo
+collegedb> db.studentinfo.find()
+[
+  {
+    _id: ObjectId('69943208b3426ed8924d7942'),
+    name: 'Rohit',
+    age: 20,
+    cgpa: 8.5
+  },
+  {
+    _id: ObjectId('699433c6b3426ed8924d7943'),
+    name: 'sunil chetrry',
+    age: 20,
+    cgpa: 7.3
+  },
+  {
+    _id: ObjectId('699433c6b3426ed8924d7944'),
+    name: 'Virat',
+    age: 21,
+    gpa: 6.5
+  },
+  {
+    _id: ObjectId('699433c6b3426ed8924d7945'),
+    name: 'Dhoni',
+    age: 19,
+    gpa: 9.4
+  }
+]
+collegedb> db.studentinfo.find({name:"dhoni",age:19)
+Uncaught:
+SyntaxError: Unexpected token, expected "," (1:40)
+
+> 1 | db.studentinfo.find({name:"dhoni",age:19)
+    |                                         ^
+  2 |
+
+collegedb> db.studentinfo.find({name:"dhoni",age:19})
+
+collegedb> db.studentinfo.find({name:"Dhoni",age:19})
+[
+  {
+    _id: ObjectId('699433c6b3426ed8924d7945'),
+    name: 'Dhoni',
+    age: 19,
+    gpa: 9.4
+  }
+]
+collegedb> db.studentinfo.find({name:{$eq:"Dhoni"})
+Uncaught:
+SyntaxError: Unexpected token, expected "," (1:39)
+
+> 1 | db.studentinfo.find({name:{$eq:"Dhoni"})
+    |                                        ^
+  2 |
+
+collegedb> db.studentinfo.find({name:{$eq:"Dhoni"}})
+[
+  {
+    _id: ObjectId('699433c6b3426ed8924d7945'),
+    name: 'Dhoni',
+    age: 19,
+    gpa: 9.4
+  }
+]
+collegedb> db.studentinfo.find({name: { $eq: "Dhoni"}})
+[
+  {
+    _id: ObjectId('699433c6b3426ed8924d7945'),
+    name: 'Dhoni',
+    age: 19,
+    gpa: 9.4
+  }
+]
+collegedb> db.studentinfo.find({age: { $gt: "Dhoni"}collegedb> db.studentinfo.find({age: { $gt: "Dhoni"})collegedb> db.studentinfo.find({age: { $gt: "Dhoni" })collegedbcollegedb> db.studentinfo.find({age: {$gte:19,$lte:20}},{name:true,age:true,_id:false})
+[
+  { name: 'Rohit', age: 20 },
+  { name: 'sunil chetrry', age: 20 },
+  { name: 'Dhoni', age: 19 }
+]
+collegedb> db.studentinfo.find({age:{$in:[19,20,21,22,23]}})
+[
+  {
+    _id: ObjectId('69943208b3426ed8924d7942'),
+    name: 'Rohit',
+    age: 20,
+    cgpa: 8.5
+  },
+  {
+    _id: ObjectId('699433c6b3426ed8924d7943'),
+    name: 'sunil chetrry',
+    age: 20,
+    cgpa: 7.3
+  },
+  {
+    _id: ObjectId('699433c6b3426ed8924d7944'),
+    name: 'Virat',
+    age: 21,
+    gpa: 6.5
+  },
+  {
+    _id: ObjectId('699433c6b3426ed8924d7945'),
+    name: 'Dhoni',
+    age: 19,
+    gpa: 9.4
+  }
+]
+collegedb> db.studentinfo.find({$and:[{name:"Dhoni"},{age:{$gte:19}}]})
+[
+  {
+    _id: ObjectId('699433c6b3426ed8924d7945'),
+    name: 'Dhoni',
+    age: 19,
+    gpa: 9.4
+  }
+]
+collegedb> db.studentinfo.find({$or:[{name:"Dhoni"},{age:{$lte:19}}]})
+[
+  {
+    _id: ObjectId('699433c6b3426ed8924d7945'),
+    name: 'Dhoni',
+    age: 19,
+    gpa: 9.4
+  }
+]
+collegedb> db.studentinfo.find({$nor:[{name:"Dhoni"},{age:{$lte:19}}]})
+[
+  {
+    _id: ObjectId('69943208b3426ed8924d7942'),
+    name: 'Rohit',
+    age: 20,
+    cgpa: 8.5
+  },
+  {
+    _id: ObjectId('699433c6b3426ed8924d7943'),
+    name: 'sunil chetrry',
+    age: 20,
+    cgpa: 7.3
+  },
+  {
+    _id: ObjectId('699433c6b3426ed8924d7944'),
+    name: 'Virat',
+    age: 21,
+    gpa: 6.5
+  }
+]
+collegedb> db.studentinfo.deleteOne({age:21})
+{ acknowledged: true, deletedCount: 1 }
+collegedb> db.studentinfo.deleteMany({$and:[{age:{$gte:19}},{age:{$lte:20}}]})
+{ acknowledged: true, deletedCount: 3 }
+collegedb> db.studentinfo.deleteOne()
+MongoshInvalidInputError: [COMMON-10001] Missing required argument at position 0 (Collection.deleteOne)
+collegedb> db.studentinfo.deleteMany()
+MongoshInvalidInputError: [COMMON-10001] Missing required argument at position 0 (Collection.deleteMany)
+collegedb> db.studentinfo.deleteMany({})
+{ acknowledged: true, deletedCount: 0 }
+collegedb> db.studentinfo.find()
+
+collegedb> show collections
+courseinfo
+studentinfo
+teacherinfo
+collegedb> db.teacherinfo.find()
+[
+  {
+    _id: ObjectId('6994380db3426ed8924d7946'),
+    name: 'gautami ghanbir',
+    age: 45,
+    subject: 'headcoach',
+    exp: 22
+  },
+  {
+    _id: ObjectId('699439d3b3426ed8924d7947'),
+    name: 'Sachin',
+    age: 50,
+    subject: 'Batting coach',
+    exp: 10
+  },
+  {
+    _id: ObjectId('699439d3b3426ed8924d7948'),
+    name: 'Ravi sh',
+    age: 52,
+    subject: 'Asistant coach'
+  },
+  {
+    _id: ObjectId('699439d3b3426ed8924d7949'),
+    name: 'Anil k',
+    age: 49,
+    subject: [ 'phejo coach', 'boaling coach' ],
+    exp: 22
+  }
+]
+collegedb> db.teacherinfo.find()[0]
+
+collegedb> db.teacherinfo.find({name:"Dhoni"}).explain('executionStats')
+{
+  explainVersion: '1',
+  queryPlanner: {
+    namespace: 'collegedb.teacherinfo',
+    parsedQuery: { name: { '$eq': 'Dhoni' } },
+    indexFilterSet: false,
+    planCacheShapeHash: '544F3E5C',
+    planCacheKey: 'B9363AF4',
+    optimizationTimeMillis: 0,
+    maxIndexedOrSolutionsReached: false,
+    maxIndexedAndSolutionsReached: false,
+    maxScansToExplodeReached: false,
+    prunedSimilarIndexes: false,
+    winningPlan: {
+      isCached: false,
+      stage: 'COLLSCAN',
+      filter: { name: { '$eq': 'Dhoni' } },
+      direction: 'forward'
+    },
+    rejectedPlans: []
+  },
+  executionStats: {
+    executionSuccess: true,
+    nReturned: 0,
+    executionTimeMillis: 31,
+    totalKeysExamined: 0,
+    totalDocsExamined: 4,
+    executionStages: {
+      isCached: false,
+      stage: 'COLLSCAN',
+      filter: { name: { '$eq': 'Dhoni' } },
+      nReturned: 0,
+      executionTimeMillisEstimate: 0,
+      works: 5,
+      advanced: 0,
+      needTime: 4,
+      needYield: 0,
+      saveState: 0,
+      restoreState: 0,
+      isEOF: 1,
+      direction: 'forward',
+      docsExamined: 4
+    }
+  },
+  queryShapeHash: 'E099B17047F470743788C2737096CFD713134C987236ADA7CF2BDA249C0035FB',
+  command: {
+    find: 'teacherinfo',
+    filter: { name: 'Dhoni' },
+    '$db': 'collegedb'
+  },
+  serverInfo: {
+    host: 'DESKTOP-KG56JKT',
+    port: 27017,
+    version: '8.0.4',
+    gitVersion: 'bc35ab4305d9920d9d0491c1c9ef9b72383d31f9'
+  },
+  serverParameters: {
+    internalQueryFacetBufferSizeBytes: 104857600,
+    internalQueryFacetMaxOutputDocSizeBytes: 104857600,
+    internalLookupStageIntermediateDocumentMaxSizeBytes: 104857600,
+    internalDocumentSourceGroupMaxMemoryBytes: 104857600,
+    internalQueryMaxBlockingSortMemoryUsageBytes: 104857600,
+    internalQueryProhibitBlockingMergeOnMongoS: 0,
+    internalQueryMaxAddToSetBytes: 104857600,
+    internalDocumentSourceSetWindowFieldsMaxMemoryBytes: 104857600,
+    internalQueryFrameworkControl: 'trySbeRestricted',
+    internalQueryPlannerIgnoreIndexWithCollationForRegex: 1
+  },
+  ok: 1
+}
+collegedb> db.teacherinfo.find()
+[
+  {
+    _id: ObjectId('6994380db3426ed8924d7946'),
+    name: 'gautami ghanbir',
+    age: 45,
+    subject: 'headcoach',
+    exp: 22
+  },
+  {
+    _id: ObjectId('699439d3b3426ed8924d7947'),
+    name: 'Sachin',
+    age: 50,
+    subject: 'Batting coach',
+    exp: 10
+  },
+  {
+    _id: ObjectId('699439d3b3426ed8924d7948'),
+    name: 'Ravi sh',
+    age: 52,
+    subject: 'Asistant coach'
+  },
+  {
+    _id: ObjectId('699439d3b3426ed8924d7949'),
+    name: 'Anil k',
+    age: 49,
+    subject: [ 'phejo coach', 'boaling coach' ],
+    exp: 22
+  }
+]
+collegedb> db.teacherinfo.createIndex({name:1})
+name_1
+collegedb> db.teacherinfo.find({name:"Dhoni"}).explain('executionStats')
+{
+  explainVersion: '1',
+  queryPlanner: {
+    namespace: 'collegedb.teacherinfo',
+    parsedQuery: { name: { '$eq': 'Dhoni' } },
+    indexFilterSet: false,
+    planCacheShapeHash: '544F3E5C',
+    planCacheKey: 'EEE0759C',
+    optimizationTimeMillis: 0,
+    maxIndexedOrSolutionsReached: false,
+    maxIndexedAndSolutionsReached: false,
+    maxScansToExplodeReached: false,
+    prunedSimilarIndexes: false,
+    winningPlan: {
+      isCached: false,
+      stage: 'FETCH',
+      inputStage: {
+        stage: 'IXSCAN',
+        keyPattern: { name: 1 },
+        indexName: 'name_1',
+        isMultiKey: false,
+        multiKeyPaths: { name: [] },
+        isUnique: false,
+        isSparse: false,
+        isPartial: false,
+        indexVersion: 2,
+        direction: 'forward',
+        indexBounds: { name: [ '["Dhoni", "Dhoni"]' ] }
+      }
+    },
+    rejectedPlans: []
+  },
+  executionStats: {
+    executionSuccess: true,
+    nReturned: 0,
+    executionTimeMillis: 66,
+    totalKeysExamined: 0,
+    totalDocsExamined: 0,
+    executionStages: {
+      isCached: false,
+      stage: 'FETCH',
+      nReturned: 0,
+      executionTimeMillisEstimate: 28,
+      works: 1,
+      advanced: 0,
+      needTime: 0,
+      needYield: 0,
+      saveState: 1,
+      restoreState: 1,
+      isEOF: 1,
+      docsExamined: 0,
+      alreadyHasObj: 0,
+      inputStage: {
+        stage: 'IXSCAN',
+        nReturned: 0,
+        executionTimeMillisEstimate: 28,
+        works: 1,
+        advanced: 0,
+        needTime: 0,
+        needYield: 0,
+        saveState: 1,
+        restoreState: 1,
+        isEOF: 1,
+        keyPattern: { name: 1 },
+        indexName: 'name_1',
+        isMultiKey: false,
+        multiKeyPaths: { name: [] },
+        isUnique: false,
+        isSparse: false,
+        isPartial: false,
+        indexVersion: 2,
+        direction: 'forward',
+        indexBounds: { name: [ '["Dhoni", "Dhoni"]' ] },
+        keysExamined: 0,
+        seeks: 1,
+        dupsTested: 0,
+        dupsDropped: 0
+      }
+    }
+  },
+  queryShapeHash: 'E099B17047F470743788C2737096CFD713134C987236ADA7CF2BDA249C0035FB',
+  command: {
+    find: 'teacherinfo',
+    filter: { name: 'Dhoni' },
+    '$db': 'collegedb'
+  },
+  serverInfo: {
+    host: 'DESKTOP-KG56JKT',
+    port: 27017,
+    version: '8.0.4',
+    gitVersion: 'bc35ab4305d9920d9d0491c1c9ef9b72383d31f9'
+  },
+  serverParameters: {
+    internalQueryFacetBufferSizeBytes: 104857600,
+    internalQueryFacetMaxOutputDocSizeBytes: 104857600,
+    internalLookupStageIntermediateDocumentMaxSizeBytes: 104857600,
+    internalDocumentSourceGroupMaxMemoryBytes: 104857600,
+    internalQueryMaxBlockingSortMemoryUsageBytes: 104857600,
+    internalQueryProhibitBlockingMergeOnMongoS: 0,
+    internalQueryMaxAddToSetBytes: 104857600,
+    internalDocumentSourceSetWindowFieldsMaxMemoryBytes: 104857600,
+    internalQueryFrameworkControl: 'trySbeRestricted',
+    internalQueryPlannerIgnoreIndexWithCollationForRegex: 1
+  },
+  ok: 1
+}
+collegedb> db.teacherInfo.getIndexes()
+MongoServerError[NamespaceNotFound]: ns does not exist: collegedb.teacherInfo
+collegedb> db.teacherinfo.getIndexes()
+[
+  { v: 2, key: { _id: 1 }, name: '_id_' },
+  { v: 2, key: { name: 1 }, name: 'name_1' }
+]
+collegedb> db.teacherinfo.dropIndexes("name_l")
+MongoServerError[IndexNotFound]: index not found with name [name_l]
+collegedb> db.teacherinfo.dropIndexes("name_1")
+{ nIndexesWas: 2, ok: 1 }
+collegedb>
